@@ -162,4 +162,4 @@ module Mastermind
     end
 end
 
-# Mastermind.play
+Mastermind.play
