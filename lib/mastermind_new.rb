@@ -1,5 +1,6 @@
 HELP = 'HELP'
 QUIT = 'QUIT'
+
 CONVERSION_CONTAINER = {
     1 => 'R',
     2 => 'G',
@@ -9,6 +10,15 @@ CONVERSION_CONTAINER = {
     6 => 'C'
 }
 
+COLOR_CONTAINER = {
+    1 => "\e[91m●\e[0m",
+    2 => "\e[92m●\e[0m",
+    3 => "\e[93m●\e[0m",
+    4 => "\e[94m●\e[0m",
+    5 => "\e[95m●\e[0m",
+    6 => "\e[96m●\e[0m"
+}
+
 module Mastermind
     def self.play
         previous_guesses = []
@@ -16,22 +26,23 @@ module Mastermind
         pins_out = []
         gen_list = GeneratedList.new
         game_code = Code.new(gen_list.random_code)
+        game_out = Outputs.new
+        first_launch = true
         until game_code.matched do
+            game_out.win
             system "clear"
+            if first_launch
+                game_out.welcome
+                first_launch = false
+            end
             if remaining_guesses.zero?
                 puts "You ran out of guesses..."
                 break
             end
             if !previous_guesses.empty?
-                puts "Previous Guesses:"
-                previous_guesses.map do |v|
-                    puts v.join(' ')
-                end
+                game_out.old_guesses(previous_guesses)
             end
-            if pins_out != []
-                puts "Red Pins: " + pins_out[0].to_s
-                puts "White Pins: " + pins_out[1].to_s
-            end
+
             puts remaining_guesses.to_s + " Guesses Remaining..."
             puts "Your color choices are R, G, Y, B, M, and C."
             user_in = Input.new
@@ -39,10 +50,11 @@ module Mastermind
                 user_in = Input.new
             end
             current_code = Code.new(user_in.user_input)
-            previous_guesses << current_code.convert
             pins_out = game_code.compare(current_code.value)
             remaining_guesses -= 1
+            previous_guesses << [(10 - remaining_guesses), current_code.convert_to_color, pins_out]
         end
+
         puts "The code was: " + game_code.convert.join(' ')
     end
 
@@ -76,7 +88,7 @@ module Mastermind
     
         def initialize
             puts 'Please enter a code or command...'
-            print ">>> "
+            print "⎯⎯→ "
             validate(gets.chomp)
         end
     
@@ -129,6 +141,12 @@ module Mastermind
                 end
             end
         end
+
+        def convert_to_color(input = @value)
+            input.map do |v|
+                COLOR_CONTAINER[v.to_i]
+            end
+        end
     
         def compare(compare_code)
             red_pins = 0
@@ -140,7 +158,7 @@ module Mastermind
                 puts "YOU WIN!"
                 @matched = true
             else
-                compare_code.collect!.with_index do |v, i|
+                edited_code = compare_code.collect.with_index do |v, i|
                     if editable_code[i] == v
                         editable_code[i] = 'x'
                         red_pins += 1
@@ -149,7 +167,7 @@ module Mastermind
                         v
                     end
                 end
-                compare_code.map.with_index do |v, i|
+                edited_code.map.with_index do |v, i|
                     if v.is_a? Numeric
                         if editable_code.include?(v)
                             editable_code[editable_code.find_index(v)] = 'x'
@@ -159,6 +177,52 @@ module Mastermind
                 end
                 return [red_pins, white_pins]
             end
+        end
+    end
+
+    class Outputs
+        def welcome
+            puts "╭────────────────────────╮"
+            puts "│ Welcome to Mastermind! │"
+            puts "╰────────────────────────╯"
+        end
+
+        def old_guesses(guesses_list)
+            puts "╭───────────────────────────╮"
+            puts "│ Previous Guesses          │"
+            puts "┝━━━┯━━━━━━━━━┯━━━━━┯━━━━━━━┥"
+            puts "│ # │  Guess  │ Red │ White │"
+            puts "├───┼─────────┼─────┼───────┤"
+            guesses_list.each do |v|
+                new_string = "│ " + v[0].to_s + " │ " + v[1].join(" ") + " │  " + v[2][0].to_s + "  │   " + v[2][1].to_s + "   │"
+                puts new_string
+            end
+            puts "╰───┴─────────┴─────┴───────╯"
+        end
+
+        def rules
+            puts "Mastermind is a strategical guessing game. At the beginning of"
+            puts "the game a code will be generated that you need to guess. Each"
+            puts "generated code will be four colors long and can consist of any"
+            puts "of the six available colors (red, green, yellow, blue, magenta,"
+            puts "and cyan). The generated code CAN contain duplicate colors. You"
+            puts "must crack this code within ten guesses or you will lose. After"
+            puts "each guess you will be given a response of white pins and red"
+            puts "A white pin indicates that your guess contains a correct color"
+            puts "that is in the wrong position and a red pin indicates that your"
+            puts "guess has a correct color that is also in the correct position."
+        end
+
+        def win
+            puts "╔═══════════════════════════════════════════════════════════════════════════════╗"
+            puts "║  ____    ____  ______    __    __     ____    __    ____  __  .__   __.  __   ║"
+            puts "║  \\   \\  /   / /  __  \\  |  |  |  |    \\   \\  /  \\  /   / |  | |  \\ |  | |  |  ║"
+            puts "║   \\   \\/   / |  |  |  | |  |  |  |     \\   \\/    \\/   /  |  | |   \\|  | |  |  ║"
+            puts "║    \\_    _/  |  |  |  | |  |  |  |      \\            /   |  | |  . `  | |  |  ║"
+            puts "║      |  |    |  `--'  | |  `--'  |       \\    /\\    /    |  | |  |\\   | |__|  ║"
+            puts "║      |__|     \\______/   \\______/         \\__/  \\__/     |__| |__| \\__| (__)  ║"
+            puts "║                                                                               ║"
+            puts "╚═══════════════════════════════════════════════════════════════════════════════╝"
         end
     end
 end
