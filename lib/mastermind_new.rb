@@ -1,3 +1,14 @@
+HELP = 'HELP'
+QUIT = 'QUIT'
+CONVERSION_CONTAINER = {
+    1 => 'R',
+    2 => 'G',
+    3 => 'Y',
+    4 => 'B',
+    5 => 'M',
+    6 => 'C'
+}
+
 module Mastermind
     def self.play
         previous_guesses = []
@@ -7,11 +18,11 @@ module Mastermind
         game_code = Code.new(gen_list.random_code)
         until game_code.matched do
             system "clear"
-            if remaining_guesses == 0
+            if remaining_guesses.zero?
                 puts "You ran out of guesses..."
                 break
             end
-            if previous_guesses != []
+            if !previous_guesses.empty?
                 puts "Previous Guesses:"
                 previous_guesses.map do |v|
                     puts v.join(' ')
@@ -85,11 +96,11 @@ module Mastermind
         end
     
         def commands(command)
-            if command == 'HELP'
+            if command == HELP
                 puts 'Help placeholder...'
             elsif command == 'RESTART'
                 puts 'Restart placeholder...'
-            elsif command == 'QUIT'
+            elsif command == QUIT
                 puts 'Quit placeholder...'
             else
                 puts 'Bad Command'
@@ -110,23 +121,13 @@ module Mastermind
         end
     
         def convert(input = @value)
-            converted_code = []
-            conversion_container = {
-                1 => 'R',
-                2 => 'G',
-                3 => 'Y',
-                4 => 'B',
-                5 => 'M',
-                6 => 'C'
-            }
             input.map do |v|
-                if /[1-9]/ === input[0].to_s
-                    converted_code << conversion_container.invert.key(v).to_s.upcase
-                elsif /[rgybmcRGYBMC]/ === input[0]
-                    converted_code << conversion_container.key(v).to_i
+                if v.to_i.positive?
+                    CONVERSION_CONTAINER[v.to_i]
+                else
+                    CONVERSION_CONTAINER.key(v)
                 end
             end
-            return converted_code
         end
     
         def compare(compare_code)
