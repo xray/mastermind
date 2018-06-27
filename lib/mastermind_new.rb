@@ -29,7 +29,6 @@ module Mastermind
         game_out = Outputs.new
         first_launch = true
         until game_code.matched do
-            game_out.win
             system "clear"
             if first_launch
                 game_out.welcome
@@ -227,4 +226,4 @@ module Mastermind
     end
 end
 
-Mastermind.play
+# Mastermind.play

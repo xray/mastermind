@@ -3,7 +3,7 @@ require 'mastermind_new'
 RSpec.describe Mastermind, 'in terms of the' do
     context 'class GeneratedList, given' do
         it 'the list of generated possibile combinations the length should equal 1296' do
-            expect(Mastermind::GeneratedList.new.get.length).to eq 1296
+            expect(Mastermind::GeneratedList.new.get_list.length).to eq 1296
         end
     end
 
