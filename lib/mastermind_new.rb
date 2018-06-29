@@ -53,7 +53,6 @@ module Mastermind
             remaining_guesses -= 1
             previous_guesses << [(10 - remaining_guesses), current_code.convert_to_color, pins_out]
         end
-
         puts "The code was: " + game_code.convert.join(' ')
     end
 
@@ -226,4 +225,4 @@ module Mastermind
     end
 end
 
-# Mastermind.play
+Mastermind.play
