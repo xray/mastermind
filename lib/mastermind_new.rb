@@ -93,7 +93,7 @@ module Mastermind
         def validate(check_me)
             if /[\/]\w/ === check_me
                 commands(check_me.tr('/', '').upcase)
-            elsif /\A[rgybmcRGYBMC][rgybmcRGYBMC][rgybmcRGYBMC][rgybmcRGYBMC]\z/ === check_me
+            elsif /\A[rgybmcRGYBMC]{4}\z/ === check_me
                 @user_input = check_me.split(//)
                 @is_valid = true
             elsif /\A[rgybmcRGYBMC]\s[rgybmcRGYBMC]\s[rgybmcRGYBMC]\s[rgybmcRGYBMC]\z/ === check_me
@@ -205,7 +205,7 @@ module Mastermind
             puts "of the six available colors (red, green, yellow, blue, magenta,"
             puts "and cyan). The generated code CAN contain duplicate colors. You"
             puts "must crack this code within ten guesses or you will lose. After"
-            puts "each guess you will be given a response of white pins and red"
+            puts "each guess you will be given a response of white and red pins."
             puts "A white pin indicates that your guess contains a correct color"
             puts "that is in the wrong position and a red pin indicates that your"
             puts "guess has a correct color that is also in the correct position."
