@@ -162,6 +162,8 @@ module Mastermind
             else
                 system "clear"
                 puts "The command \"#{command.downcase}\" is not valid."
+                puts "Type \"/help\" for a list of commands."
+                puts "========================================="
             end
         end
     end
