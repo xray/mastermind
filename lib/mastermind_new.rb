@@ -1,5 +1,6 @@
 HELP = 'HELP'
 QUIT = 'QUIT'
+EXIT = 'EXIT'
 
 CONVERSION_CONTAINER = {
     1 => 'R',
@@ -61,6 +62,10 @@ module Mastermind
     
         def initialize
             @get_list = []
+            generate_list
+        end
+
+        def generate_list
             starting_point = { fourth: 1, third: 1, second: 1, first: 1 }
             until starting_point == { fourth: 6, third: 6, second: 6, first: 6 }
                 @get_list << starting_point.values
@@ -86,7 +91,7 @@ module Mastermind
     
         def initialize
             puts 'Please enter a code or command...'
-            print "⎯⎯→ "
+            print "---> "
             validate(gets.chomp)
         end
     
@@ -110,8 +115,17 @@ module Mastermind
                 puts 'Help placeholder...'
             elsif command == 'RESTART'
                 puts 'Restart placeholder...'
-            elsif command == QUIT
-                puts 'Quit placeholder...'
+            elsif command == QUIT || command == EXIT
+                system "clear"
+                puts "Are sure you want to #{command.downcase}? (Y/n)"
+                confirm_quit = gets.chomp.upcase
+                if confirm_quit == "" || confirm_quit == "Y"
+                    system "clear"
+                    exit
+                else
+                    system "clear"
+                    puts "Ok, we won't #{command.downcase}."
+                end
             else
                 puts 'Bad Command'
             end
