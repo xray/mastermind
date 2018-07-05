@@ -51,7 +51,6 @@ class Code
         editable_code = @value.clone
 
         if @value == compare_code
-            puts "YOU WIN!"
             @matched = true
         else
             edited_code = compare_code.collect.with_index do |v, i|
@@ -72,34 +71,6 @@ class Code
                 end
             end
             return [red_pins, white_pins]
-        end
-    end
-end
-
-class CodeNew
-    attr_reader :value
-    def initialize(new_code)
-
-    end
-
-    def sanitize(code_input)
-        len_code = "4"
-        if code_input.is_a? Code
-
-        elsif code_input.is_a? String
-            good_chars = code_input.upcase.gsub(/[^RGBYMC123456]/, "")
-            if (good_chars.gsub(/\d/, "").length || good_chars.gsub(/[RGBYMC]/, "").length) >= len_code
-                if good_chars.gsub(/\d/, "").length >= good_chars.gsub(/[RGBYMC]/, "").length
-                    good_chars.gsub()
-            else
-            end
-
-        elsif code_input.is_a? Hash
-
-        elsif code_input.is_a? Array
-
-        else
-
         end
     end
 end
