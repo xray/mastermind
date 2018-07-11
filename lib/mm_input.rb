@@ -1,16 +1,13 @@
-HELP = 'HELP'
-QUIT = 'QUIT'
-EXIT = 'EXIT'
-RULES = 'RULES'
+require_relative 'mm_outputs'
 
 class Input
-    attr_reader :user_input, :is_valid, :output_code, :restart_request, :show_help, :show_rules, :err_data
+    attr_reader :user_input, :is_valid, :output_code, :restart_request, :show_help, :show_rules, :err_data, :cmd_run
 
-    def initialize
+    def initialize(out = Outputs)
+        @out = Outputs
         @show_help = false
         @show_rules = false
-        puts 'Please enter a code or command...'
-        print "---> "
+        @out.in_prompt
         validate(gets.chomp)
     end
 
@@ -24,55 +21,34 @@ class Input
         to_validate = to_validate.gsub(/\s/, "").upcase
         bad_chars = to_validate.scan(/[^RGYBMC]/)
         if /[\/]\w/ === to_validate
-            commands(to_validate.tr('/', '').upcase)
-        end
-        unless bad_chars == []
-            if bad_chars.uniq.length == 1
-                @err_data[:bad_chars] = [true, "\"#{bad_chars.uniq.join("")}\" is not one of the six vaild choices..."]
-            else
-                @err_data[:bad_chars] = [true, "\"#{bad_chars.uniq.join(", ")}\" are not any of the six vaild choices..."]
-            end
-            @err_data[:err] = true
-        end
-        if to_validate.length > 4
-            @err_data[:too_long] = [true, "Your input contained #{to_validate.length - 4 } too many characters..."]
-            @err_data[:err] = true
-        end
-        if to_validate.length < 4
-            @err_data[:too_short] = [true, "Your input contained #{4 - to_validate.length} too few charactrs..."]
-            @err_data[:err] = true
-        end
-        unless err_data[:err] == true
-            @is_valid = true
-            @user_input = to_validate.split(//)
+            @cmd_run = to_validate.tr('/', '').upcase
         else
-            return err_data
+            unless bad_chars == []
+                if bad_chars.uniq.length == 1
+                    @err_data[:bad_chars] = [true, "\"#{bad_chars.uniq.join("")}\" is not one of the six vaild choices..."]
+                else
+                    @err_data[:bad_chars] = [true, "\"#{bad_chars.uniq.join(", ")}\" are not any of the six vaild choices..."]
+                end
+                @err_data[:err] = true
+            end
+            if to_validate.length > 4
+                @err_data[:too_long] = [true, "Your input contained #{to_validate.length - 4 } too many characters..."]
+                @err_data[:err] = true
+            end
+            if to_validate.length < 4
+                @err_data[:too_short] = [true, "Your input contained #{4 - to_validate.length} too few charactrs..."]
+                @err_data[:err] = true
+            end
         end
+        err_handle(to_validate, @cmd_run)
     end
 
-    def commands(command)
-        if command == HELP
-            @show_help = true
-        elsif command == 'RESTART'
-            @restart_request = true
-        elsif command == QUIT || command == EXIT
-            system "clear"
-            puts "Are sure you want to #{command.downcase}? (Y/n)"
-            confirm_quit = gets.chomp.upcase
-            if confirm_quit == "" || confirm_quit == "Y"
-                system "clear"
-                exit
-            else
-                system "clear"
-                puts "Ok, we won't #{command.downcase}."
-            end
-        elsif command == RULES
-            @show_rules = true
+    def err_handle(input, cmd)
+        unless @err_data[:err] || cmd != nil
+            @is_valid = true
+            @user_input = input.split(//)
         else
-            system "clear"
-            puts "The command \"#{command.downcase}\" is not valid."
-            puts "Type \"/help\" for a list of commands."
-            puts "========================================="
+            return err_data
         end
     end
 end
