@@ -4,17 +4,20 @@ class Choice
     class << self
         def create(query, default_state = true, out = Outputs)
             @out = out
-            default_display = ""
-            if default_state
-                default_display = "(Y/n)"
-            else
-                default_display = "(y/N)"
-            end
+            default_display = configure_default_display(default_state)
             question = "#{query} #{default_display}"
             return pose(question, default_state)
         end
 
             private
+
+        def configure_default_display(default)
+            if default
+                return "(Y/n)"
+            else
+                return "(y/N)"
+            end
+        end
 
         def pose(question, default)
             valid_input = false
@@ -23,17 +26,15 @@ class Choice
             until valid_input do
                 @out.ask_question(question)
                 choice = gets.chomp.upcase
-                if choice == "Y" || choice == "N" || choice == ""
-                    if choice == "Y"
-                        valid_choice = true
-                        valid_input = true
-                    elsif choice == "N"
-                        valid_choice = false
-                        valid_input = true
-                    elsif choice == ""
-                        valid_choice = default
-                        valid_input = true
-                    end
+                if choice == "Y"
+                    valid_choice = true
+                    valid_input = true
+                elsif choice == "N"
+                    valid_choice = false
+                    valid_input = true
+                elsif choice == ""
+                    valid_choice = default
+                    valid_input = true
                 else
                     err_data = {
                         err: true,

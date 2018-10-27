@@ -9,4 +9,5 @@
 1. run `ruby lib/mm.rb`
 
 ## Running Tests
-1. run `rspec`
+1. If rspec is not installed, do so by running `gem install rspec`
+2. run `rspec`

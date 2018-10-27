@@ -56,13 +56,13 @@ class Game
 
     def input_loop
         user_in = @in.new
-        until user_in.is_valid do
-            if user_in.cmd_run != nil
+        until user_in.is_valid? do
+            user_in.get_input
+            if user_in.cmd_run
                 commands = @cmds.new(@status, user_in.cmd_run)
             elsif user_in.err_data[:err]
                 display_input_error(user_in)
             end
-            user_in = @in.new
         end
         return user_in
     end
