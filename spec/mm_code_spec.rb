@@ -1,12 +1,6 @@
-require 'mm'
+require 'mm_code'
 
-RSpec.describe Mastermind, 'in terms of the' do
-    context 'class GeneratedList, given' do
-        it 'the list of generated possibile combinations the length should equal 1296' do
-            expect(GeneratedList.new.get_list.length).to eq 1296
-        end
-    end
-
+RSpec.describe Code, 'in terms of the' do
     context 'class Code, given' do
         it "the code 'r y b g' to the code 'r b y g' the result should be two red pins and two white pins" do
             expect(Code.new(["r", "y", "b", "g"]).compare(Code.new(["r", "b", "y", "g"]).value)).to eq [2, 2]
