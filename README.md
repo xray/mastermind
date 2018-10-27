@@ -9,5 +9,4 @@
 1. run `ruby lib/mm.rb`
 
 ## Running Tests
-1. Comment out the last line in lib/mm.rb
-2. run `rspec spec/mm_spec.rb`
+1. run `rspec`
